@@ -63,8 +63,9 @@ The %{name}-viewer package contains a viewer for %{name}.
 Summary:        A compiler for the %{name} language
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 BuildArch:      noarch
-Requires:       java
+Requires:       java-headless
 Requires:       javapackages-filesystem
+Requires:       /usr/bin/xmllint
 
 %description    compiler
 The %{name}-compiler package contains a compiler for the %{name} language.
@@ -102,13 +103,13 @@ autoreconf --install
 
 popd
 
-pushd viewers/pv
-ant jar
-popd
+%make_build checker plexilscript pv
 
 pushd compilers/plexil
 %make_build -j1 ANTLR="%{_bindir}/antlr3" ANTLR3_TOOL_JAR=%{_javadir}/antlr3-runtime.jar 2>&1 SAXON_JAR=%{_javadir}/saxon/saxon.jar
 popd
+
+
 
 %install
 pushd src
@@ -143,9 +144,12 @@ popd
 
 # compiler
 # TODO: We're bundling nanoxml, this should be unbundled
-%__install -p -D -t %{buildroot}/%{_javadir} jars/PlexilCompiler.jar jars/nanoxml.jar
+%__install -p -D -t %{buildroot}/%{_javadir} jars/PlexilCompiler.jar jars/nanoxml.jar jars/plexilscript.jar
+%__install -p -D -t %{buildroot}/%{_javadir}/%{name} checker/global-decl-checker.jar
 %__install -p -D -t %{buildroot}/%{_bindir} compilers/plexil/PlexilCompiler compilers/plexil/PlexilCompilerDebug
 %__install -p -D -t %{buildroot}/%{_datarootdir}/%{name}/schema schema/*.{rnc,rng,xsd,xsl}
+%__install -p -D -t %{buildroot}/%{_datarootdir}/%{name}/scripts scripts/checkDecls
+%__install -p -D -t %{buildroot}/%{_bindir} scripts/plexilc
 
 
 %files
@@ -160,6 +164,7 @@ popd
 %{_libdir}/plexil
 %{_sysconfdir}/profile.d/%{name}.sh
 %dir %{_datarootdir}/%{name}
+%dir %{_datarootdir}/%{name}/scripts
 
 %files devel
 %{_includedir}/plexil
@@ -171,9 +176,13 @@ popd
 %files compiler
 %{_javadir}/PlexilCompiler.jar
 %{_javadir}/nanoxml.jar
+%{_javadir}/plexilscript.jar
+%{_javadir}/%{name}
+%{_datarootdir}/%{name}/schema
+%{_datarootdir}/%{name}/scripts/checkDecls
 %{_bindir}/PlexilCompiler
 %{_bindir}/PlexilCompilerDebug
-%{_datarootdir}/%{name}/schema
+%{_bindir}/plexilc
 
 %files test
 %{_bindir}/plexil-TestExec

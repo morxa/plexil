@@ -1,3 +1,48 @@
+diff --git a/Makefile b/Makefile
+index 3448086..90c48ce 100644
+--- a/Makefile
++++ b/Makefile
+@@ -26,11 +26,6 @@
+ # USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ 
+ MY_PLEXIL_HOME := $(shell pwd)
+-ifneq ($(PLEXIL_HOME),)
+-ifneq ($(PLEXIL_HOME),$(MY_PLEXIL_HOME))
+-$(error Environment variable PLEXIL_HOME is in error. It must be set to $(MY_PLEXIL_HOME) before proceeding)
+-endif
+-endif
+ 
+ export PLEXIL_HOME := $(MY_PLEXIL_HOME)
+ 
+@@ -62,6 +57,7 @@ essentials: universalExec TestExec IpcAdapter UdpAdapter plexil-compiler plexils
+ # Standalone targets
+ #
+ 
++.PHONY: checker pv plexil-compiler plexilscript robosim sample
+ checker:
+ 	(cd checker && ant jar)
+ 
+diff --git a/checker/build.xml b/checker/build.xml
+index 6427f94..0c9e75d 100644
+--- a/checker/build.xml
++++ b/checker/build.xml
+@@ -13,14 +13,14 @@
+   <property name = "domain-scope"       value = "main"/>
+   <property name = "domain-scope-dir"   value = ""/>
+   <property name = "main-class"         value = "DeclMain"/>
+-  <property name = "lib-dir"            location = "${env.PLEXIL_HOME}/jars"/>
++  <property name = "jar-dir"            location = "/usr/share/java"/>
+   <property name = "resources"          location = "."/>
+   <property name = "compile-includes"   location = "reader/**,main/**,model/**"/>
+   <property name = "compile-excludes"   location = ""/>
+   
+   <!-- java library files that belong in the class path and the jar -->
+   
+-  <fileset dir = "${lib-dir}" id = "libraries">
++  <fileset dir = "${jar-dir}" id = "libraries">
+     <include name = "nanoxml.jar"/>
+   </fileset>
+   
 diff --git a/compilers/plexil/PlexilCompiler b/compilers/plexil/PlexilCompiler
 index b9db242..3a43d17 100755
 --- a/compilers/plexil/PlexilCompiler
@@ -58,6 +103,63 @@ index 3f3c06a..59574a8 100755
 -
 -exec $JDB -classpath $JARS_DIR/PlexilCompiler.jar:$JARS_DIR/$ANTLR_RUNTIME_JAR:$JARS_DIR/nanoxml.jar:$JARS_DIR/saxon.jar plexil.Compiler $@
 +JAVA=/usr/bin/jdb ./PlexilCompiler $@
+diff --git a/compilers/plexilscript/build.xml b/compilers/plexilscript/build.xml
+index 56fe9d0..159d51c 100644
+--- a/compilers/plexilscript/build.xml
++++ b/compilers/plexilscript/build.xml
+@@ -5,13 +5,13 @@
+   </description>
+ 
+   <property environment="env"/>
+-  <property name="dir.antlr" location="${env.PLEXIL_HOME}/jars"/>
++  <property name="dir.antlr" location="/usr/share/java"/>
+   <property name="dir.grammars" location="antlr"/>
+   <property name="dir.java" location="java"/>
+   <property name="dir.generated" location="generated"/>
+   <property name="dir.classes" location="classes"/>
+   <property name="dir.jars" location="jars"/>
+-  <property name="dir.install" location="${env.PLEXIL_HOME}"/>
++  <property name="dir.install" location="../../jars"/>
+ 
+   <path id="antlr.classpath">
+       <pathelement path="${classpath}"/>
+@@ -32,7 +32,7 @@
+ 
+   <target name="install" depends="plexilscript-jar">
+     <copy file="${dir.jars}/plexilscript.jar"
+-	  todir="${env.PLEXIL_HOME}/jars"
++      todir="${dir.install}"
+ 	  preservelastmodified="true"/>
+   </target>
+ 
+diff --git a/scripts/checkPlexil b/scripts/checkPlexil
+index c313859..a8fdd71 100755
+--- a/scripts/checkPlexil
++++ b/scripts/checkPlexil
+@@ -42,21 +42,14 @@ then
+     exit 2
+ fi
+ 
+-prog=${PLEXIL_HOME}/checker/global-decl-checker.jar
++prog=/usr/share/java/plexil/global-decl-checker.jar
+ args=$*
+ JAVA=java
+-if [ -n "$JAVA_HOME" ]
+-then
+-    JAVA=$JAVA_HOME/bin/java
+-fi
+ 
+ # Make sure jar file exists
+ if [ ! -f "${prog}" ]
+ then
+-  echo "Cannot find file ${prog}. To build it:"
+-  echo "  cd ${PLEXIL_HOME}/checker"
+-  echo "  ant jar"
+-  echo "If JAR is located elsewhere, please update the location in the script."
++  echo "Cannot find file ${prog}."
+   exit 2
+ fi
+ 
 diff --git a/scripts/plexil.profile.sh b/scripts/plexil.profile.sh
 new file mode 100644
 index 0000000..7f90c6c
@@ -69,3 +171,31 @@ index 0000000..7f90c6c
 +PLEXIL_HOME=${PLEXIL_HOME:-/usr/share/plexil}
 +
 +export PLEXIL_HOME
+diff --git a/scripts/plexilc b/scripts/plexilc
+index 1c73bb3..321fe82 100755
+--- a/scripts/plexilc
++++ b/scripts/plexilc
+@@ -62,19 +62,13 @@ then
+     exit 1
+ fi
+ 
+-. ${PLEXIL_HOME}/scripts/plexil-setup.sh
+-
+-JARS_DIR=${PLEXIL_HOME}/jars
+-ANTLR_RUNTIME_JAR=antlr-3.5.2-complete-no-st3.jar
++JARS_DIR=/usr/share/java/
++ANTLR_RUNTIME_JAR=antlr3-runtime.jar
+ JAVA=java
+-if [ -n "$JAVA_HOME" ]
+-then
+-    JAVA=$JAVA_HOME/bin/java
+-fi
+ 
+ # Commands to execute
+-plexil_compiler="$JAVA -classpath $JARS_DIR/PlexilCompiler.jar:$JARS_DIR/$ANTLR_RUNTIME_JAR:$JARS_DIR/nanoxml.jar:$JARS_DIR/saxon.jar plexil.Compiler"
+-plexilscript_compiler="$JAVA -cp ${JARS_DIR}/plexilscript.jar:${JARS_DIR}/antlr.jar plexilscript.PlexilScriptParse"
++plexil_compiler="$JAVA -classpath $JARS_DIR/PlexilCompiler.jar:$JARS_DIR/$ANTLR_RUNTIME_JAR:$JARS_DIR/nanoxml.jar:$JARS_DIR/saxon/saxon.jar plexil.Compiler"
++plexilscript_compiler="$JAVA -cp ${JARS_DIR}/plexilscript.jar:${JARS_DIR}/antlr3.jar plexilscript.PlexilScriptParse"
+ plexil_checker="$PLEXIL_HOME/scripts/checkDecls"
+ 
+ # Parse options
