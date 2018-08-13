@@ -1,6 +1,6 @@
 Name:           plexil
 Version:        4.5.0
-Release:        0.2%{?dist}
+Release:        0.3%{?dist}
 Summary:        A programming language for representing plans for automation
 
 License:        BSD
@@ -79,6 +79,13 @@ for file in * ; do
 done
 popd
 
+# Move plugins and internally used libs into a plexil sub-directory
+pushd %{buildroot}/%{_libdir}
+mkdir -p plexil
+mv libGanttListener* libLauncher* libLuvListener* libPlanDebugListener* libUdpAdapter* libUdpUtils* \
+  plexil/
+popd
+
 
 %files
 %license LICENSE
@@ -89,6 +96,7 @@ popd
 %{_bindir}/plexil-benchmark
 %{_bindir}/plexil-universalExec
 %{_libdir}/*.so.*
+%{_libdir}/plexil
 
 %files devel
 %{_includedir}/plexil
@@ -106,6 +114,9 @@ popd
 
 
 %changelog
+* Mon Aug 13 2018 Till Hofmann <thofmann@fedoraproject.org> - 4.5.0-0.3
+- Move plugins into a plexil sub-directory
+
 * Mon Aug 13 2018 Till Hofmann <thofmann@fedoraproject.org> - 4.5.0-0.2
 - Add patch to use external pugixml instead of thirdparty copylib
 
