@@ -1,6 +1,6 @@
 Name:           plexil
 Version:        4.5.0
-Release:        0.1%{?dist}
+Release:        0.2%{?dist}
 Summary:        A programming language for representing plans for automation
 
 License:        BSD
@@ -11,10 +11,12 @@ URL:            http://plexil.sourceforge.net/
 # svn export https://svn.code.sf.net/p/plexil/code/branches/plexil-4 plexil-%%{version}
 # tar czf plexil-%%{version}.tar.gz plexil-%%{version}
 Source0:        %{name}-%{version}.tar.gz
+Patch0:         %{name}.remove-pugixml.patch
 
 BuildRequires:  automake
 BuildRequires:  gcc-c++
 BuildRequires:  libtool
+BuildRequires:  pugixml-devel
 
 %description
 PLEXIL (Plan Execution Interchange Language) is a language for representing
@@ -43,7 +45,7 @@ The %{name}-test package contains binaries to test the functionality of %{name}.
 
 
 %prep
-%autosetup
+%autosetup -p1
 
 
 %build
@@ -104,5 +106,8 @@ popd
 
 
 %changelog
+* Mon Aug 13 2018 Till Hofmann <thofmann@fedoraproject.org> - 4.5.0-0.2
+- Add patch to use external pugixml instead of thirdparty copylib
+
 * Thu Aug  9 2018 Till Hofmann <thofmann@fedoraproject.org> - 4.5.0-0.1
 -  initial package

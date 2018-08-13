@@ -1,0 +1,184 @@
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 7cda13f..cee4823 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -66,7 +66,7 @@ endif
+ ##
+ 
+ SUBDIRS = utils value expr intfc exec \
+- third-party/pugixml/src xml-parser app-framework \
++ xml-parser app-framework \
+  interfaces/Launcher \
+  $(MAYBE_DEBUG_LISTENER_SUBDIRS) $(MAYBE_VIEWER_SUBDIRS) \
+  $(MAYBE_UNIVERSAL_EXEC_SUBDIRS) \
+diff --git a/src/app-framework/Makefile.am b/src/app-framework/Makefile.am
+index 74ff9cf..dc60e58 100644
+--- a/src/app-framework/Makefile.am
++++ b/src/app-framework/Makefile.am
+@@ -26,7 +26,6 @@
+ lib_LTLIBRARIES = libPlexilAppFramework.la
+ 
+ libPlexilAppFramework_la_CPPFLAGS = $(AM_CPPFLAGS) -I@top_srcdir@/xml-parser \
+- -I@top_srcdir@/third-party/pugixml/src \
+  -I@top_srcdir@/exec -I@top_srcdir@/intfc -I@top_srcdir@/expr \
+  -I@top_srcdir@/value -I@top_srcdir@/utils
+ 
+@@ -61,7 +60,8 @@ endif
+ 
+ # Libraries to link against
+ libPlexilAppFramework_la_LIBADD = @top_srcdir@/xml-parser/libPlexilXmlParser.la \
+- @top_srcdir@/third-party/pugixml/src/libpugixml.la @top_srcdir@/exec/libPlexilExec.la \
++ -lpugixml \
++ @top_srcdir@/exec/libPlexilExec.la \
+  @top_srcdir@/intfc/libPlexilIntfc.la @top_srcdir@/expr/libPlexilExpr.la \
+  @top_srcdir@/value/libPlexilValue.la @top_srcdir@/utils/libPlexilUtils.la
+ 
+diff --git a/src/apps/TestExec/Makefile.am b/src/apps/TestExec/Makefile.am
+index b189ba6..68118ac 100644
+--- a/src/apps/TestExec/Makefile.am
++++ b/src/apps/TestExec/Makefile.am
+@@ -31,7 +31,7 @@ TestExec_SOURCES = exec-test-runner.cc ExecTestRunner.cc TestExternalInterface.c
+ TestExec_LDADD =
+ 
+ TestExec_CPPFLAGS = $(AM_CPPFLAGS) -I@top_srcdir@/app-framework \
+- -I@top_srcdir@/xml-parser -I@top_srcdir@/third-party/pugixml/src \
++ -I@top_srcdir@/xml-parser \
+  -I@top_srcdir@/exec -I@top_srcdir@/intfc -I@top_srcdir@/expr \
+  -I@top_srcdir@/value -I@top_srcdir@/utils
+ 
+@@ -55,7 +55,7 @@ endif
+ 
+ TestExec_LDADD += @top_srcdir@/app-framework/libPlexilAppFramework.la \
+  @top_srcdir@/xml-parser/libPlexilXmlParser.la \
+- @top_srcdir@/third-party/pugixml/src/libpugixml.la \
++ -lpugixml \
+  @top_srcdir@/exec/libPlexilExec.la @top_srcdir@/intfc/libPlexilIntfc.la \
+  @top_srcdir@/expr/libPlexilExpr.la @top_srcdir@/value/libPlexilValue.la \
+  @top_srcdir@/utils/libPlexilUtils.la
+diff --git a/src/configure.ac b/src/configure.ac
+index 7faf02a..f658e8f 100644
+--- a/src/configure.ac
++++ b/src/configure.ac
+@@ -214,7 +214,6 @@ AC_CONFIG_FILES([Makefile
+                  expr/Makefile
+                  intfc/Makefile
+                  exec/Makefile
+-                 third-party/pugixml/src/Makefile
+                  xml-parser/Makefile
+                  app-framework/Makefile
+                  interfaces/Launcher/Makefile])
+diff --git a/src/interfaces/GanttListener/Makefile.am b/src/interfaces/GanttListener/Makefile.am
+index 4a0e9d1..5b9c42d 100644
+--- a/src/interfaces/GanttListener/Makefile.am
++++ b/src/interfaces/GanttListener/Makefile.am
+@@ -26,7 +26,7 @@
+ lib_LTLIBRARIES = libGanttListener.la
+ include_HEADERS = GanttListener.hh
+ libGanttListener_la_CPPFLAGS = $(AM_CPPFLAGS) \
+- -I@top_srcdir@/third-party/pugixml/src -I@top_srcdir@/app-framework \
++ -I@top_srcdir@/app-framework \
+  -I@top_srcdir@/expr -I@top_srcdir@/intfc -I@top_srcdir@/exec \
+  -I@top_srcdir@/value -I@top_srcdir@/utils
+ libGanttListener_la_SOURCES = GanttListener.cc
+diff --git a/src/interfaces/IpcAdapter/Makefile.am b/src/interfaces/IpcAdapter/Makefile.am
+index 801e5b6..ff74787 100644
+--- a/src/interfaces/IpcAdapter/Makefile.am
++++ b/src/interfaces/IpcAdapter/Makefile.am
+@@ -31,7 +31,7 @@ libIpcAdapter_la_SOURCES = IpcAdapter.cc initIpcAdapter.cc MessageQueueMap.cc
+ 
+ libIpcAdapter_la_CPPFLAGS = $(AM_CPPFLAGS) -I@top_srcdir@/interfaces/IpcUtils \
+  -I@top_srcdir@/third-party/ipc/src -I@top_srcdir@/app-framework \
+- -I@top_srcdir@/xml-parser -I@top_srcdir@/third-party/pugixml/src \
++ -I@top_srcdir@/xml-parser \
+  -I@top_srcdir@/exec -I@top_srcdir@/intfc -I@top_srcdir@/expr \
+  -I@top_srcdir@/value -I@top_srcdir@/utils
+ 
+diff --git a/src/interfaces/Launcher/Makefile.am b/src/interfaces/Launcher/Makefile.am
+index f7b0e35..3c4e7a8 100644
+--- a/src/interfaces/Launcher/Makefile.am
++++ b/src/interfaces/Launcher/Makefile.am
+@@ -27,6 +27,6 @@ lib_LTLIBRARIES = libLauncher.la
+ include_HEADERS =
+ libLauncher_la_SOURCES = Launcher.cc
+ libLauncher_la_CPPFLAGS = $(AM_CPPFLAGS) \
+- -I@top_srcdir@/third-party/pugixml/src -I@top_srcdir@/app-framework \
++ -I@top_srcdir@/app-framework \
+  -I@top_srcdir@/exec -I@top_srcdir@/intfc -I@top_srcdir@/expr \
+  -I@top_srcdir@/value -I@top_srcdir@/utils
+diff --git a/src/interfaces/LuvListener/Makefile.am b/src/interfaces/LuvListener/Makefile.am
+index 5328b34..48f5e21 100644
+--- a/src/interfaces/LuvListener/Makefile.am
++++ b/src/interfaces/LuvListener/Makefile.am
+@@ -26,7 +26,6 @@
+ lib_LTLIBRARIES = libLuvListener.la
+ 
+ libLuvListener_la_CPPFLAGS = $(AM_CPPFLAGS) -I@top_srcdir@/interfaces/Sockets \
+- -I@top_srcdir@/third-party/pugixml/src \
+  -I@top_srcdir@/app-framework \
+  -I@top_srcdir@/exec -I@top_srcdir@/intfc -I@top_srcdir@/expr \
+  -I@top_srcdir@/value -I@top_srcdir@/utils
+diff --git a/src/interfaces/PlanDebugListener/Makefile.am b/src/interfaces/PlanDebugListener/Makefile.am
+index 351071d..9ad9e28 100644
+--- a/src/interfaces/PlanDebugListener/Makefile.am
++++ b/src/interfaces/PlanDebugListener/Makefile.am
+@@ -26,7 +26,6 @@
+ lib_LTLIBRARIES = libPlanDebugListener.la
+ 
+ libPlanDebugListener_la_CPPFLAGS = $(AM_CPPFLAGS) -I@top_srcdir@/app-framework \
+- -I@top_srcdir@/third-party/pugixml/src \
+  -I@top_srcdir@/exec -I@top_srcdir@/intfc -I@top_srcdir@/expr \
+  -I@top_srcdir@/value -I@top_srcdir@/utils
+ 
+diff --git a/src/interfaces/UdpAdapter/Makefile.am b/src/interfaces/UdpAdapter/Makefile.am
+index 5a6bff5..0dd4e96 100644
+--- a/src/interfaces/UdpAdapter/Makefile.am
++++ b/src/interfaces/UdpAdapter/Makefile.am
+@@ -33,7 +33,7 @@ libUdpUtils_la_CPPFLAGS = $(AM_CPPFLAGS) -I@top_srcdir@/utils
+ libUdpAdapter_la_SOURCES = MessageQueueMap.cc UdpAdapter.cc
+ libUdpAdapter_la_LIBADD = libUdpUtils.la
+ libUdpAdapter_la_CPPFLAGS = $(AM_CPPFLAGS) -I@top_srcdir@/interfaces/UpdUtils \
+- -I@top_srcdir@/third-party/pugixml/src -I@top_srcdir@/app-framework \
++ -I@top_srcdir@/app-framework \
+  -I@top_srcdir@/exec -I@top_srcdir@/intfc -I@top_srcdir@/expr \
+  -I@top_srcdir@/value -I@top_srcdir@/utils
+ 
+diff --git a/src/universal-exec/Makefile.am b/src/universal-exec/Makefile.am
+index 189515b..9c885b4 100644
+--- a/src/universal-exec/Makefile.am
++++ b/src/universal-exec/Makefile.am
+@@ -26,11 +26,11 @@
+ bin_PROGRAMS = universalExec
+ universalExec_SOURCES = UniversalExec.cc
+ 
+-universalExec_CPPFLAGS = $(AM_CPPFLAGS) -I@top_srcdir@/third-party/pugixml/src \
++universalExec_CPPFLAGS = $(AM_CPPFLAGS) \
+  -I@top_srcdir@/app-framework -I@top_srcdir@/exec -I@top_srcdir@/intfc \
+  -I@top_srcdir@/expr -I@top_srcdir@/value -I@top_srcdir@/utils
+ 
+-universalExec_LDADD = @top_srcdir@/third-party/pugixml/src/libpugixml.la \
++universalExec_LDADD = -lpugixml \
+  @top_srcdir@/app-framework/libPlexilAppFramework.la \
+  @top_srcdir@/exec/libPlexilExec.la @top_srcdir@/intfc/libPlexilIntfc.la \
+  @top_srcdir@/expr/libPlexilExpr.la @top_srcdir@/value/libPlexilValue.la \
+diff --git a/src/xml-parser/Makefile.am b/src/xml-parser/Makefile.am
+index 78d8e58..74b037b 100644
+--- a/src/xml-parser/Makefile.am
++++ b/src/xml-parser/Makefile.am
+@@ -28,7 +28,7 @@ AUTOMAKE_OPTIONS = subdir-objects
+ lib_LTLIBRARIES = libPlexilXmlParser.la
+ 
+ libPlexilXmlParser_la_CPPFLAGS = $(AM_CPPFLAGS) \
+- -I@top_srcdir@/third-party/pugixml/src -I@top_srcdir@/exec \
++ -I@top_srcdir@/exec \
+  -I@top_srcdir@/intfc -I@top_srcdir@/expr -I@top_srcdir@/value \
+  -I@top_srcdir@/utils
+ 
+@@ -45,7 +45,7 @@ libPlexilXmlParser_la_SOURCES = ArithmeticFunctionFactory.cc \
+  PlexilSchema.cc SymbolTable.cc updateXmlParser.cc UserVariableFactory.cc
+ 
+ DEPENDED_LIBS = libPlexilXmlParser.la \
+- @top_srcdir@/third-party/pugixml/src/libpugixml.la @top_srcdir@/exec/libPlexilExec.la \
++ -lpugixml @top_srcdir@/exec/libPlexilExec.la \
+  @top_srcdir@/intfc/libPlexilIntfc.la @top_srcdir@/expr/libPlexilExpr.la \
+  @top_srcdir@/value/libPlexilValue.la @top_srcdir@/utils/libPlexilUtils.la
+ 
