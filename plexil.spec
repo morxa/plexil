@@ -1,6 +1,6 @@
 Name:           plexil
 Version:        4.5.0
-Release:        0.6%{?dist}
+Release:        0.7%{?dist}
 Summary:        A programming language for representing plans for automation
 
 License:        BSD
@@ -26,6 +26,7 @@ BuildRequires:  java-1.8.0-openjdk-devel
 # Compiler
 BuildRequires:  antlr3-java
 BuildRequires:  antlr3-tool
+BuildRequires:  nanoxml
 BuildRequires:  saxon
 
 
@@ -65,6 +66,7 @@ Requires:       %{name}%{?_isa} = %{version}-%{release}
 BuildArch:      noarch
 Requires:       java-headless
 Requires:       javapackages-filesystem
+Requires:       nanoxml
 Requires:       /usr/bin/xmllint
 Recommends:     %{name}-lisp
 
@@ -94,7 +96,7 @@ The %{name}-test package contains binaries to test the functionality of %{name}.
 %prep
 %autosetup -p1
 
-find jars -name "*.jar" ! -name nanoxml.jar -delete
+find jars -name "*.jar" -delete
 
 
 %build
@@ -155,8 +157,7 @@ pushd viewers/pv
 popd
 
 # compiler
-# TODO: We're bundling nanoxml, this should be unbundled
-%__install -p -D -t %{buildroot}/%{_javadir} jars/PlexilCompiler.jar jars/nanoxml.jar jars/plexilscript.jar
+%__install -p -D -t %{buildroot}/%{_javadir} jars/PlexilCompiler.jar jars/plexilscript.jar
 %__install -p -D -t %{buildroot}/%{_javadir}/%{name} checker/global-decl-checker.jar
 %__install -p -D -t %{buildroot}/%{_bindir} compilers/plexil/PlexilCompiler compilers/plexil/PlexilCompilerDebug
 %__install -p -D -t %{buildroot}/%{_datarootdir}/%{name}/schema schema/*.{rnc,rng,xsd,xsl}
@@ -193,7 +194,6 @@ popd
 
 %files compiler
 %{_javadir}/PlexilCompiler.jar
-%{_javadir}/nanoxml.jar
 %{_javadir}/plexilscript.jar
 %{_javadir}/%{name}
 %{_datarootdir}/%{name}/schema
@@ -222,6 +222,9 @@ popd
 
 
 %changelog
+* Mon Aug 13 2018 Till Hofmann <thofmann@fedoraproject.org> - 4.5.0-0.7
+- Debundle nanoxml
+
 * Mon Aug 13 2018 Till Hofmann <thofmann@fedoraproject.org> - 4.5.0-0.6
 - Add plexilisp as lisp sub-package
 
