@@ -12,8 +12,9 @@ URL:            http://plexil.sourceforge.net/
 # tar czf plexil-%%{version}.tar.gz plexil-%%{version}
 Source0:        %{name}-%{version}.tar.gz
 
-BuildRequires:  autoconf
+BuildRequires:  automake
 BuildRequires:  gcc-c++
+BuildRequires:  libtool
 
 %description
 PLEXIL (Plan Execution Interchange Language) is a language for representing
