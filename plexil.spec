@@ -1,6 +1,6 @@
 Name:           plexil
 Version:        4.5.0
-Release:        0.5%{?dist}
+Release:        0.6%{?dist}
 Summary:        A programming language for representing plans for automation
 
 License:        BSD
@@ -66,9 +66,21 @@ BuildArch:      noarch
 Requires:       java-headless
 Requires:       javapackages-filesystem
 Requires:       /usr/bin/xmllint
+Recommends:     %{name}-lisp
 
 %description    compiler
 The %{name}-compiler package contains a compiler for the %{name} language.
+
+
+%package        lisp
+Summary:        A lisp parser for the %{name} language
+Requires:       %{name}%{?_isa} = %{version}-%{release}
+BuildArch:      noarch
+Requires:       /usr/bin/emacs
+Requires:       /usr/bin/perl
+
+%description    lisp
+The %{name}-lisp package contains a compiler for the %{name} language.
 
 
 %package        test
@@ -151,6 +163,12 @@ popd
 %__install -p -D -t %{buildroot}/%{_datarootdir}/%{name}/scripts scripts/checkDecls
 %__install -p -D -t %{buildroot}/%{_bindir} scripts/plexilc
 
+# plexilisp
+%__install -p -D -t %{buildroot}/%{_bindir} scripts/plexilisp
+pushd compilers/plexilisp
+%__install -p -D -t %{buildroot}/%{_datarootdir}/%{name}/plexilisp *.el xmlformat.*
+popd
+
 
 %files
 %license LICENSE
@@ -184,6 +202,14 @@ popd
 %{_bindir}/PlexilCompilerDebug
 %{_bindir}/plexilc
 
+%files lisp
+%license compilers/plexilisp/xmlformat-license.txt
+%doc compilers/plexilisp/README
+%doc compilers/plexilisp/examples
+%{_bindir}/plexilisp
+%{_datarootdir}/%{name}/plexilisp
+
+
 %files test
 %{_bindir}/plexil-TestExec
 %{_bindir}/plexil-exec-module-tests
@@ -196,6 +222,9 @@ popd
 
 
 %changelog
+* Mon Aug 13 2018 Till Hofmann <thofmann@fedoraproject.org> - 4.5.0-0.6
+- Add plexilisp as lisp sub-package
+
 * Mon Aug 13 2018 Till Hofmann <thofmann@fedoraproject.org> - 4.5.0-0.5
 - Add compiler sub-package
 

@@ -103,6 +103,32 @@ index 3f3c06a..59574a8 100755
 -
 -exec $JDB -classpath $JARS_DIR/PlexilCompiler.jar:$JARS_DIR/$ANTLR_RUNTIME_JAR:$JARS_DIR/nanoxml.jar:$JARS_DIR/saxon.jar plexil.Compiler $@
 +JAVA=/usr/bin/jdb ./PlexilCompiler $@
+diff --git a/compilers/plexilisp/emacs.el b/compilers/plexilisp/emacs.el
+index 807006b..e818873 100644
+--- a/compilers/plexilisp/emacs.el
++++ b/compilers/plexilisp/emacs.el
+@@ -25,7 +25,7 @@
+ 
+ (defun init-plexilisp (&optional compile)
+   (interactive)
+-  (let* ((plexildir (format "%s/compilers/plexilisp" (getenv "PLEXIL_HOME")))
++  (let* ((plexildir (format "%s/plexilisp" (getenv "PLEXIL_HOME")))
+          (source-file (format "%s/plexil.el" plexildir))
+          (compiled-file (format "%s/plexil.elc" plexildir))
+          (max-specpdl-size 2700))
+diff --git a/compilers/plexilisp/plexil.el b/compilers/plexilisp/plexil.el
+index 0ec7427..c136ce6 100644
+--- a/compilers/plexilisp/plexil.el
++++ b/compilers/plexilisp/plexil.el
+@@ -53,7 +53,7 @@
+ ;;;   ...the rest should be intuitive
+ 
+ (defconst *plexil-home* (format "%s" (getenv "PLEXIL_HOME")))
+-(defconst *plexilisp-location* (format "%s/compilers/plexilisp" *plexil-home*))
++(defconst *plexilisp-location* (format "%s/plexilisp" *plexil-home*))
+ (defconst *bin-location* (format "%s/scripts" *plexil-home*))
+ 
+ ;;; Note that this version is for Plexilisp only; not tied to
 diff --git a/compilers/plexilscript/build.xml b/compilers/plexilscript/build.xml
 index 56fe9d0..159d51c 100644
 --- a/compilers/plexilscript/build.xml
@@ -172,7 +198,7 @@ index 0000000..7f90c6c
 +
 +export PLEXIL_HOME
 diff --git a/scripts/plexilc b/scripts/plexilc
-index 1c73bb3..321fe82 100755
+index 1c73bb3..e9c9e32 100755
 --- a/scripts/plexilc
 +++ b/scripts/plexilc
 @@ -62,19 +62,13 @@ then
@@ -199,3 +225,25 @@ index 1c73bb3..321fe82 100755
  plexil_checker="$PLEXIL_HOME/scripts/checkDecls"
  
  # Parse options
+@@ -172,9 +166,9 @@ then
+ 
+     if [ -n "$quiet" ]
+     then
+-	emacs --batch --no-site-file --load $PLEXIL_HOME/compilers/plexilisp/plexil.el $1 --eval '(plexil)' > /dev/null 2>&1
++	emacs --batch --no-site-file --load $PLEXIL_HOME/plexilisp/plexil.el $1 --eval '(plexil)' > /dev/null 2>&1
+     else
+-	emacs --batch --no-site-file --load $PLEXIL_HOME/compilers/plexilisp/plexil.el $1 --eval '(plexil)'
++	emacs --batch --no-site-file --load $PLEXIL_HOME/plexilisp/plexil.el $1 --eval '(plexil)'
+     fi
+ 
+ 	# If plexilisp generates a plan, we can check it.
+diff --git a/scripts/plexilisp b/scripts/plexilisp
+index f211fe1..e311b00 100755
+--- a/scripts/plexilisp
++++ b/scripts/plexilisp
+@@ -37,4 +37,4 @@ then
+     exit 1
+ fi
+ 
+-emacs --batch --no-site-file --load $PLEXIL_HOME/compilers/plexilisp/plexil.el $1 --eval '(plexil)'
++emacs --batch --no-site-file --load $PLEXIL_HOME/plexilisp/plexil.el $1 --eval '(plexil)'
