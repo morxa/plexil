@@ -26,6 +26,7 @@ BuildRequires:  java-1.8.0-openjdk-devel
 # Compiler
 BuildRequires:  antlr3-java
 BuildRequires:  antlr3-tool
+BuildRequires:  ant-antlr
 BuildRequires:  nanoxml
 BuildRequires:  saxon
 
