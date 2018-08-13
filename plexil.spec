@@ -1,6 +1,6 @@
 Name:           plexil
 Version:        4.5.0
-Release:        0.3%{?dist}
+Release:        0.4%{?dist}
 Summary:        A programming language for representing plans for automation
 
 License:        BSD
@@ -17,6 +17,9 @@ BuildRequires:  automake
 BuildRequires:  gcc-c++
 BuildRequires:  libtool
 BuildRequires:  pugixml-devel
+
+BuildRequires:  ant
+BuildRequires:  java-1.8.0-openjdk-devel
 
 %description
 PLEXIL (Plan Execution Interchange Language) is a language for representing
@@ -35,13 +38,23 @@ The %{name}-devel package contains libraries and header files for
 developing applications that use %{name}.
 
 
+%package        viewer
+Summary:        A viewer for %{name}
+Requires:       %{name}%{?_isa} = %{version}-%{release}
+BuildArch:      noarch
+Requires:       java
+Requires:       javapackages-filesystem
+
+%description    viewer
+The %{name}-viewer package contains a viewer for %{name}.
+
+
 %package        test
 Summary:        Test files for %{name}
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
 %description    test
 The %{name}-test package contains binaries to test the functionality of %{name}.
-
 
 
 %prep
@@ -64,10 +77,17 @@ autoreconf --install
 
 %make_build
 
+popd
+
+pushd viewers/pv
+ant jar
+popd
+
 
 %install
 pushd src
 %make_install
+popd
 
 # Remove static libraries and libtool files
 find %{buildroot} -name "*.a" -o -name "*.la" -delete
@@ -86,6 +106,10 @@ mv libGanttListener* libLauncher* libLuvListener* libPlanDebugListener* libUdpAd
   plexil/
 popd
 
+pushd viewers/pv
+%__install -p -D luv.jar %{buildroot}/%{_javadir}/%{name}-viewer.jar
+popd
+
 
 %files
 %license LICENSE
@@ -102,6 +126,9 @@ popd
 %{_includedir}/plexil
 %{_libdir}/*.so
 
+%files viewer
+%{_javadir}/%{name}-viewer.jar
+
 %files test
 %{_bindir}/plexil-TestExec
 %{_bindir}/plexil-exec-module-tests
@@ -114,6 +141,9 @@ popd
 
 
 %changelog
+* Mon Aug 13 2018 Till Hofmann <thofmann@fedoraproject.org> - 4.5.0-0.4
+- Also build and install the viewer
+
 * Mon Aug 13 2018 Till Hofmann <thofmann@fedoraproject.org> - 4.5.0-0.3
 - Move plugins into a plexil sub-directory
 
