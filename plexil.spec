@@ -115,6 +115,10 @@ pushd src
 %make_install
 popd
 
+# sh profile
+%__install -p -D scripts/plexil.profile.sh %{buildroot}/%{_sysconfdir}/profile.d/plexil.sh
+
+
 # Remove static libraries and libtool files
 find %{buildroot} -name "*.a" -o -name "*.la" -delete
 
@@ -154,6 +158,7 @@ popd
 %{_bindir}/plexil-universalExec
 %{_libdir}/*.so.*
 %{_libdir}/plexil
+%{_sysconfdir}/profile.d/%{name}.sh
 %dir %{_datarootdir}/%{name}
 
 %files devel

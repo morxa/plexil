@@ -58,3 +58,14 @@ index 3f3c06a..59574a8 100755
 -
 -exec $JDB -classpath $JARS_DIR/PlexilCompiler.jar:$JARS_DIR/$ANTLR_RUNTIME_JAR:$JARS_DIR/nanoxml.jar:$JARS_DIR/saxon.jar plexil.Compiler $@
 +JAVA=/usr/bin/jdb ./PlexilCompiler $@
+diff --git a/scripts/plexil.profile.sh b/scripts/plexil.profile.sh
+new file mode 100644
+index 0000000..7f90c6c
+--- /dev/null
++++ b/scripts/plexil.profile.sh
+@@ -0,0 +1,5 @@
++# /etc/profile.d/plexil.sh - set PLEXIL_HOME if not set yet
++
++PLEXIL_HOME=${PLEXIL_HOME:-/usr/share/plexil}
++
++export PLEXIL_HOME
