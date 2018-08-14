@@ -1,6 +1,6 @@
 Name:           plexil
 Version:        4.5.0
-Release:        0.7%{?dist}
+Release:        0.8%{?dist}
 Summary:        A programming language for representing plans for automation
 
 License:        BSD
@@ -253,6 +253,10 @@ popd
 
 
 %changelog
+* Tue Aug 14 2018 Till Hofmann <thofmann@fedoraproject.org> - 4.5.0-0.8
+- Add more patched scripts
+- Add examples sub-package
+
 * Mon Aug 13 2018 Till Hofmann <thofmann@fedoraproject.org> - 4.5.0-0.7
 - Debundle nanoxml
 
