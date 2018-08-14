@@ -34,6 +34,7 @@ Requires:       /usr/bin/netstat
 Requires:       /usr/bin/xmllint
 
 Recommends:     %{name}-compiler
+Recommends:     %{name}-examples
 
 %description
 PLEXIL (Plan Execution Interchange Language) is a language for representing
@@ -94,6 +95,14 @@ Requires:       %{name}%{?_isa} = %{version}-%{release}
 
 %description    test
 The %{name}-test package contains binaries to test the functionality of %{name}.
+
+
+%package        examples
+Summary:        Example programs for %{name}
+BuildArch:      noarch
+
+%description    examples
+The %{name}-examples package contains examples for programs using %{name}.
 
 
 %prep
@@ -237,6 +246,10 @@ popd
 %{_bindir}/plexil-utils-module-tests
 %{_bindir}/plexil-value-module-tests
 
+
+%files examples
+%license LICENSE
+%doc examples
 
 
 %changelog
