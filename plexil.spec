@@ -30,6 +30,8 @@ BuildRequires:  ant-antlr
 BuildRequires:  nanoxml
 BuildRequires:  saxon
 
+Requires:       /usr/bin/netstat
+Requires:       /usr/bin/xmllint
 
 Recommends:     %{name}-compiler
 
@@ -152,6 +154,12 @@ mv libGanttListener* libLauncher* libLuvListener* libPlanDebugListener* libUdpAd
   plexil/
 popd
 
+%__install -p -D -t %{buildroot}/%{_datarootdir}/%{name}/examples examples/empty.psx
+pushd scripts
+%__install -p -D -t %{buildroot}/%{_bindir} summarize-plexil plexiltest
+%__install -p -D -t %{buildroot}/%{_datarootdir}/%{name}/scripts list_ports_in_use plexil-check-prog checkPlexil
+popd
+
 # viewer
 pushd viewers/pv
 %__install -p -D luv.jar %{buildroot}/%{_javadir}/%{name}-viewer.jar
@@ -162,8 +170,10 @@ popd
 %__install -p -D -t %{buildroot}/%{_javadir}/%{name} checker/global-decl-checker.jar
 %__install -p -D -t %{buildroot}/%{_bindir} compilers/plexil/PlexilCompiler compilers/plexil/PlexilCompilerDebug
 %__install -p -D -t %{buildroot}/%{_datarootdir}/%{name}/schema schema/*.{rnc,rng,xsd,xsl}
-%__install -p -D -t %{buildroot}/%{_datarootdir}/%{name}/scripts scripts/checkDecls
-%__install -p -D -t %{buildroot}/%{_bindir} scripts/plexilc
+pushd scripts
+%__install -p -D -t %{buildroot}/%{_datarootdir}/%{name}/scripts checkDecls eplexil
+%__install -p -D -t %{buildroot}/%{_bindir} plexilc
+popd
 
 # plexilisp
 %__install -p -D -t %{buildroot}/%{_bindir} scripts/plexilisp
@@ -180,11 +190,17 @@ popd
 %{_bindir}/plexil-analyzePlan
 %{_bindir}/plexil-benchmark
 %{_bindir}/plexil-universalExec
+%{_bindir}/plexiltest
+%{_bindir}/summarize-plexil
 %{_libdir}/*.so.*
 %{_libdir}/plexil
 %{_sysconfdir}/profile.d/%{name}.sh
 %dir %{_datarootdir}/%{name}
 %dir %{_datarootdir}/%{name}/scripts
+%{_datarootdir}/%{name}/examples/empty.psx
+%{_datarootdir}/%{name}/scripts/list_ports_in_use
+%{_datarootdir}/%{name}/scripts/plexil-check-prog
+%{_datarootdir}/%{name}/scripts/checkPlexil
 
 %files devel
 %{_includedir}/plexil
@@ -199,6 +215,7 @@ popd
 %{_javadir}/%{name}
 %{_datarootdir}/%{name}/schema
 %{_datarootdir}/%{name}/scripts/checkDecls
+%{_datarootdir}/%{name}/scripts/eplexil
 %{_bindir}/PlexilCompiler
 %{_bindir}/PlexilCompilerDebug
 %{_bindir}/plexilc
