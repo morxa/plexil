@@ -1,0 +1,153 @@
+diff --git a/src/apps/TestExec/Makefile.am b/src/apps/TestExec/Makefile.am
+index 68118ac..a18fe37 100644
+--- a/src/apps/TestExec/Makefile.am
++++ b/src/apps/TestExec/Makefile.am
+@@ -42,12 +42,12 @@ if JNI_OPT
+ endif
+ 
+ if DEBUG_LISTENER_OPT
+-  TestExec_LDADD += @top_srcdir@/interfaces/PlanDebugListener/libPlanDebugListener.la
++  TestExec_LDADD += @top_srcdir@/interfaces/PlanDebugListener/libPlexilPlanDebugListener.la
+   TestExec_CPPFLAGS += -I@top_srcdir@/interfaces/PlanDebugListener
+ endif
+ 
+ if VIEWER_OPT
+-  TestExec_LDADD += @top_srcdir@/interfaces/LuvListener/libLuvListener.la \
++  TestExec_LDADD += @top_srcdir@/interfaces/LuvListener/libPlexilLuvListener.la \
+    @top_srcdir@/interfaces/Sockets/libPlexilSockets.la
+   TestExec_CPPFLAGS += -I@top_srcdir@/interfaces/LuvListener \
+    -I@top_srcdir@/interfaces/Sockets
+diff --git a/src/interfaces/GanttListener/Makefile.am b/src/interfaces/GanttListener/Makefile.am
+index 5b9c42d..982765c 100644
+--- a/src/interfaces/GanttListener/Makefile.am
++++ b/src/interfaces/GanttListener/Makefile.am
+@@ -23,13 +23,13 @@
+ # TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+ # USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ 
+-lib_LTLIBRARIES = libGanttListener.la
++lib_LTLIBRARIES = libPlexilGanttListener.la
+ include_HEADERS = GanttListener.hh
+-libGanttListener_la_CPPFLAGS = $(AM_CPPFLAGS) \
++libPlexilGanttListener_la_CPPFLAGS = $(AM_CPPFLAGS) \
+  -I@top_srcdir@/app-framework \
+  -I@top_srcdir@/expr -I@top_srcdir@/intfc -I@top_srcdir@/exec \
+  -I@top_srcdir@/value -I@top_srcdir@/utils
+-libGanttListener_la_SOURCES = GanttListener.cc
++libPlexilGanttListener_la_SOURCES = GanttListener.cc
+ 
+ # TODO: libraries to link against (?)
+ 
+diff --git a/src/interfaces/Launcher/Makefile.am b/src/interfaces/Launcher/Makefile.am
+index 3c4e7a8..3de0687 100644
+--- a/src/interfaces/Launcher/Makefile.am
++++ b/src/interfaces/Launcher/Makefile.am
+@@ -23,10 +23,10 @@
+ # TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+ # USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ 
+-lib_LTLIBRARIES = libLauncher.la
++lib_LTLIBRARIES = libPlexilLauncher.la
+ include_HEADERS =
+-libLauncher_la_SOURCES = Launcher.cc
+-libLauncher_la_CPPFLAGS = $(AM_CPPFLAGS) \
++libPlexilLauncher_la_SOURCES = Launcher.cc
++libPlexilLauncher_la_CPPFLAGS = $(AM_CPPFLAGS) \
+  -I@top_srcdir@/app-framework \
+  -I@top_srcdir@/exec -I@top_srcdir@/intfc -I@top_srcdir@/expr \
+  -I@top_srcdir@/value -I@top_srcdir@/utils
+diff --git a/src/interfaces/LuvListener/Makefile.am b/src/interfaces/LuvListener/Makefile.am
+index 48f5e21..5da3c06 100644
+--- a/src/interfaces/LuvListener/Makefile.am
++++ b/src/interfaces/LuvListener/Makefile.am
+@@ -23,15 +23,15 @@
+ # TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+ # USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ 
+-lib_LTLIBRARIES = libLuvListener.la
++lib_LTLIBRARIES = libPlexilLuvListener.la
+ 
+-libLuvListener_la_CPPFLAGS = $(AM_CPPFLAGS) -I@top_srcdir@/interfaces/Sockets \
++libPlexilLuvListener_la_CPPFLAGS = $(AM_CPPFLAGS) -I@top_srcdir@/interfaces/Sockets \
+  -I@top_srcdir@/app-framework \
+  -I@top_srcdir@/exec -I@top_srcdir@/intfc -I@top_srcdir@/expr \
+  -I@top_srcdir@/value -I@top_srcdir@/utils
+ 
+ include_HEADERS = LuvFormat.hh LuvListener.hh
+ 
+-libLuvListener_la_SOURCES = LuvFormat.cc LuvListener.cc
++libPlexilLuvListener_la_SOURCES = LuvFormat.cc LuvListener.cc
+ 
+ # TODO: libraries to link against (?)
+diff --git a/src/interfaces/PlanDebugListener/Makefile.am b/src/interfaces/PlanDebugListener/Makefile.am
+index 9ad9e28..f2409bf 100644
+--- a/src/interfaces/PlanDebugListener/Makefile.am
++++ b/src/interfaces/PlanDebugListener/Makefile.am
+@@ -23,14 +23,14 @@
+ # TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+ # USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ 
+-lib_LTLIBRARIES = libPlanDebugListener.la
++lib_LTLIBRARIES = libPlexilPlanDebugListener.la
+ 
+-libPlanDebugListener_la_CPPFLAGS = $(AM_CPPFLAGS) -I@top_srcdir@/app-framework \
++libPlexilPlanDebugListener_la_CPPFLAGS = $(AM_CPPFLAGS) -I@top_srcdir@/app-framework \
+  -I@top_srcdir@/exec -I@top_srcdir@/intfc -I@top_srcdir@/expr \
+  -I@top_srcdir@/value -I@top_srcdir@/utils
+ 
+ include_HEADERS = PlanDebugListener.hh
+ 
+-libPlanDebugListener_la_SOURCES = PlanDebugListener.cc
++libPlexilPlanDebugListener_la_SOURCES = PlanDebugListener.cc
+ 
+ # TODO: libraries to link against (?)
+diff --git a/src/interfaces/UdpAdapter/Makefile.am b/src/interfaces/UdpAdapter/Makefile.am
+index 0dd4e96..8a5774b 100644
+--- a/src/interfaces/UdpAdapter/Makefile.am
++++ b/src/interfaces/UdpAdapter/Makefile.am
+@@ -25,14 +25,14 @@
+ 
+ AUTOMAKE_OPTIONS = subdir-objects
+ 
+-lib_LTLIBRARIES = libUdpUtils.la libUdpAdapter.la
++lib_LTLIBRARIES = libPlexilUdpUtils.la libPlexilUdpAdapter.la
+ include_HEADERS = MessageQueueMap.hh UdpAdapter.hh udp-utils.hh
+-libUdpUtils_la_SOURCES = udp-utils.cc
+-libUdpUtils_la_CPPFLAGS = $(AM_CPPFLAGS) -I@top_srcdir@/utils
++libPlexilUdpUtils_la_SOURCES = udp-utils.cc
++libPlexilUdpUtils_la_CPPFLAGS = $(AM_CPPFLAGS) -I@top_srcdir@/utils
+ 
+-libUdpAdapter_la_SOURCES = MessageQueueMap.cc UdpAdapter.cc
+-libUdpAdapter_la_LIBADD = libUdpUtils.la
+-libUdpAdapter_la_CPPFLAGS = $(AM_CPPFLAGS) -I@top_srcdir@/interfaces/UpdUtils \
++libPlexilUdpAdapter_la_SOURCES = MessageQueueMap.cc UdpAdapter.cc
++libPlexilUdpAdapter_la_LIBADD = libPlexilUdpUtils.la
++libPlexilUdpAdapter_la_CPPFLAGS = $(AM_CPPFLAGS) -I@top_srcdir@/interfaces/UpdUtils \
+  -I@top_srcdir@/app-framework \
+  -I@top_srcdir@/exec -I@top_srcdir@/intfc -I@top_srcdir@/expr \
+  -I@top_srcdir@/value -I@top_srcdir@/utils
+@@ -41,5 +41,5 @@ if MODULE_TESTS_OPT
+   noinst_PROGRAMS = test/udp-tests
+   test_udp_tests_SOURCES = test/udp-tests.cc
+   test_udp_tests_CPPFLAGS = -I@top_srcdir@/utils
+-  test_udp_tests_LDADD = libUdpUtils.la @top_srcdir@/utils/libPlexilUtils.la
++  test_udp_tests_LDADD = libPlexilUdpUtils.la @top_srcdir@/utils/libPlexilUtils.la
+ endif
+diff --git a/src/universal-exec/Makefile.am b/src/universal-exec/Makefile.am
+index 9c885b4..9ae434c 100644
+--- a/src/universal-exec/Makefile.am
++++ b/src/universal-exec/Makefile.am
+@@ -37,11 +37,11 @@ universalExec_LDADD = -lpugixml \
+  @top_srcdir@/utils/libPlexilUtils.la
+ 
+ if DEBUG_LISTENER_OPT
+-  universalExec_LDADD += @top_srcdir@/interfaces/PlanDebugListener/libPlanDebugListener.la
++  universalExec_LDADD += @top_srcdir@/interfaces/PlanDebugListener/libPlexilPlanDebugListener.la
+ endif
+ 
+ if VIEWER_OPT
+   universalExec_CPPFLAGS += -I@top_srcdir@/interfaces/LuvListener
+-  universalExec_LDADD += @top_srcdir@/interfaces/LuvListener/libLuvListener.la \
++  universalExec_LDADD += @top_srcdir@/interfaces/LuvListener/libPlexilLuvListener.la \
+  @top_srcdir@/interfaces/Sockets/libPlexilSockets.la
+ endif

@@ -1,6 +1,6 @@
 Name:           plexil
 Version:        4.5.0
-Release:        0.8%{?dist}
+Release:        0.9%{?dist}
 Summary:        A programming language for representing plans for automation
 
 License:        BSD
@@ -13,6 +13,7 @@ URL:            http://plexil.sourceforge.net/
 Source0:        %{name}-%{version}.tar.gz
 Patch0:         %{name}.remove-pugixml.patch
 Patch1:         %{name}.script-paths.patch
+Patch2:         %{name}.libnames.patch
 
 BuildRequires:  automake
 BuildRequires:  gcc-c++
@@ -156,12 +157,6 @@ for file in * ; do
 done
 popd
 
-# Move plugins and internally used libs into a plexil sub-directory
-pushd %{buildroot}/%{_libdir}
-mkdir -p plexil
-mv libGanttListener* libLauncher* libLuvListener* libPlanDebugListener* libUdpAdapter* libUdpUtils* \
-  plexil/
-popd
 
 %__install -p -D -t %{buildroot}/%{_datarootdir}/%{name}/examples examples/empty.psx
 pushd scripts
@@ -202,7 +197,6 @@ popd
 %{_bindir}/plexiltest
 %{_bindir}/summarize-plexil
 %{_libdir}/*.so.*
-%{_libdir}/plexil
 %{_sysconfdir}/profile.d/%{name}.sh
 %dir %{_datarootdir}/%{name}
 %dir %{_datarootdir}/%{name}/scripts
@@ -253,6 +247,9 @@ popd
 
 
 %changelog
+* Wed Aug 15 2018 Till Hofmann <thofmann@fedoraproject.org> - 4.5.0-0.9
+- Keep all libraries in %%{_libdir}, add Plexil infix instead
+
 * Tue Aug 14 2018 Till Hofmann <thofmann@fedoraproject.org> - 4.5.0-0.8
 - Add more patched scripts
 - Add examples sub-package
