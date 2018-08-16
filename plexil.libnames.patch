@@ -1,3 +1,27 @@
+diff --git a/src/app-framework/AdapterFactory.cc b/src/app-framework/AdapterFactory.cc
+index e094be0..6c9ac96 100644
+--- a/src/app-framework/AdapterFactory.cc
++++ b/src/app-framework/AdapterFactory.cc
+@@ -114,10 +114,15 @@ namespace PLEXIL
+       const char* libCPath =
+         xml.attribute(InterfaceSchema::LIB_PATH_ATTR()).value();
+       if (!dynamicLoadModule(name.c_str(), libCPath)) {
+-        warn("AdapterFactory: unable to load module for adapter type \""
+-             << name.c_str() << "\"");
+-        wasCreated = false;
+-        return NULL;
++        debugMsg("AdapterFactory:createInstance",
++            "AdapterFactory: unable to load module for adapter type \""
++             << name.c_str() << "\" " << "Trying again with prefix.");
++        if (!dynamicLoadModule(("Plexil" + name).c_str(), libCPath)) {
++          warn("AdapterFactory: unable to load module for adapter type \""
++               << name.c_str() << "\"");
++          wasCreated = false;
++          return NULL;
++        }
+       }
+ 
+       // See if it's registered now
 diff --git a/src/apps/TestExec/Makefile.am b/src/apps/TestExec/Makefile.am
 index 68118ac..a18fe37 100644
 --- a/src/apps/TestExec/Makefile.am
@@ -17,6 +41,32 @@ index 68118ac..a18fe37 100644
     @top_srcdir@/interfaces/Sockets/libPlexilSockets.la
    TestExec_CPPFLAGS += -I@top_srcdir@/interfaces/LuvListener \
     -I@top_srcdir@/interfaces/Sockets
+diff --git a/src/interfaces/GanttListener/GanttListener.cc b/src/interfaces/GanttListener/GanttListener.cc
+index acd6aa0..a5f0ce3 100644
+--- a/src/interfaces/GanttListener/GanttListener.cc
++++ b/src/interfaces/GanttListener/GanttListener.cc
+@@ -646,7 +646,7 @@ namespace PLEXIL
+    }
+ 
+    extern "C" {
+-      void initGanttListener() {
++      void initPlexilGanttListener() {
+          REGISTER_EXEC_LISTENER(GanttListener, "GanttListener");
+       }
+    }
+diff --git a/src/interfaces/GanttListener/GanttListener.hh b/src/interfaces/GanttListener/GanttListener.hh
+index 1bf14e2..e67d4fb 100644
+--- a/src/interfaces/GanttListener/GanttListener.hh
++++ b/src/interfaces/GanttListener/GanttListener.hh
+@@ -141,7 +141,7 @@ namespace PLEXIL
+ 
+ extern "C" 
+ {
+-   void initGanttListener();
++   void initPlexilGanttListener();
+ }
+ 
+ 
 diff --git a/src/interfaces/GanttListener/Makefile.am b/src/interfaces/GanttListener/Makefile.am
 index 5b9c42d..982765c 100644
 --- a/src/interfaces/GanttListener/Makefile.am
@@ -38,6 +88,29 @@ index 5b9c42d..982765c 100644
  
  # TODO: libraries to link against (?)
  
+diff --git a/src/interfaces/Launcher/Launcher.cc b/src/interfaces/Launcher/Launcher.cc
+index e2a29b9..d3ccba8 100644
+--- a/src/interfaces/Launcher/Launcher.cc
++++ b/src/interfaces/Launcher/Launcher.cc
+@@ -374,7 +374,7 @@ namespace PLEXIL
+ }
+ 
+ extern "C"
+-void initLauncher()
++void initPlexilLauncher()
+ {
+   REGISTER_ADAPTER(PLEXIL::Launcher, "Launcher");
+ }
+diff --git a/src/interfaces/Launcher/Launcher.hh b/src/interfaces/Launcher/Launcher.hh
+index 87313aa..e05fd76 100644
+--- a/src/interfaces/Launcher/Launcher.hh
++++ b/src/interfaces/Launcher/Launcher.hh
+@@ -36,4 +36,4 @@
+ #define PLAN_FAILURE_TYPE_STATE "PlanFailureType"
+ 
+ extern "C"
+-void initLauncher();
++void initPlexilLauncher();
 diff --git a/src/interfaces/Launcher/Makefile.am b/src/interfaces/Launcher/Makefile.am
 index 3c4e7a8..3de0687 100644
 --- a/src/interfaces/Launcher/Makefile.am
@@ -133,6 +206,30 @@ index 0dd4e96..8a5774b 100644
 -  test_udp_tests_LDADD = libUdpUtils.la @top_srcdir@/utils/libPlexilUtils.la
 +  test_udp_tests_LDADD = libPlexilUdpUtils.la @top_srcdir@/utils/libPlexilUtils.la
  endif
+diff --git a/src/interfaces/UdpAdapter/UdpAdapter.cc b/src/interfaces/UdpAdapter/UdpAdapter.cc
+index c96119b..10d0004 100644
+--- a/src/interfaces/UdpAdapter/UdpAdapter.cc
++++ b/src/interfaces/UdpAdapter/UdpAdapter.cc
+@@ -1330,7 +1330,7 @@ namespace PLEXIL
+ // Register the UdpAdapter
+ extern "C"
+ {
+-  void initUdpAdapter()
++  void initPlexilUdpAdapter()
+   {
+     REGISTER_ADAPTER(PLEXIL::UdpAdapter, "UdpAdapter");
+   }
+diff --git a/src/interfaces/UdpAdapter/UdpAdapter.hh b/src/interfaces/UdpAdapter/UdpAdapter.hh
+index 81a97ee..1f1eeae 100644
+--- a/src/interfaces/UdpAdapter/UdpAdapter.hh
++++ b/src/interfaces/UdpAdapter/UdpAdapter.hh
+@@ -162,5 +162,5 @@ namespace PLEXIL
+ 
+ extern "C"
+ {
+-  void initUdpAdapter();
++  void initPlexilUdpAdapter();
+ }
 diff --git a/src/universal-exec/Makefile.am b/src/universal-exec/Makefile.am
 index 9c885b4..9ae434c 100644
 --- a/src/universal-exec/Makefile.am

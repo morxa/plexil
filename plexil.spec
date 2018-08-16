@@ -33,9 +33,10 @@ BuildRequires:  saxon
 
 Requires:       /usr/bin/netstat
 Requires:       /usr/bin/xmllint
+Requires:       /usr/bin/xterm
 
-Recommends:     %{name}-compiler
-Recommends:     %{name}-examples
+Recommends:     %{name}-compiler = %{version}-%{release}
+Recommends:     %{name}-examples = %{version}-%{release}
 
 %description
 PLEXIL (Plan Execution Interchange Language) is a language for representing
@@ -162,7 +163,7 @@ popd
 %__install -p -D -t %{buildroot}/%{_datarootdir}/%{name}/examples examples/empty.psx
 pushd scripts
 %__install -p -D -t %{buildroot}/%{_bindir} summarize-plexil plexil plexilexec plexiltest
-%__install -p -D -t %{buildroot}/%{_datarootdir}/%{name}/scripts list_ports_in_use plexil-check-prog checkPlexil port_in_use find_open_port
+%__install -p -D -t %{buildroot}/%{_datarootdir}/%{name}/scripts list_ports_in_use plexil-check-prog checkPlexil port_in_use find_open_port run-agents
 popd
 
 # devel
@@ -212,6 +213,7 @@ popd
 %{_datarootdir}/%{name}/scripts/find_open_port
 %{_datarootdir}/%{name}/scripts/plexil-check-prog
 %{_datarootdir}/%{name}/scripts/checkPlexil
+%{_datarootdir}/%{name}/scripts/run-agents
 
 %files devel
 %{_includedir}/plexil
@@ -258,6 +260,8 @@ popd
 %changelog
 * Thu Aug 16 2018 Till Hofmann <thofmann@fedoraproject.org> - 4.5.0-0.11
 - Add makeinclude files to the package
+- Fix loading of adapters with Plexil prefix in library name
+- Add run-agents script
 
 * Thu Aug 16 2018 Till Hofmann <thofmann@fedoraproject.org> - 4.5.0-0.10
 - Add all scripts to run the plexil viewer, add main plexil script
