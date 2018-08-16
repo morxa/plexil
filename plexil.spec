@@ -1,6 +1,6 @@
 Name:           plexil
 Version:        4.5.0
-Release:        0.9%{?dist}
+Release:        0.10%{?dist}
 Summary:        A programming language for representing plans for automation
 
 License:        BSD
@@ -160,8 +160,8 @@ popd
 
 %__install -p -D -t %{buildroot}/%{_datarootdir}/%{name}/examples examples/empty.psx
 pushd scripts
-%__install -p -D -t %{buildroot}/%{_bindir} summarize-plexil plexiltest
-%__install -p -D -t %{buildroot}/%{_datarootdir}/%{name}/scripts list_ports_in_use plexil-check-prog checkPlexil
+%__install -p -D -t %{buildroot}/%{_bindir} summarize-plexil plexil plexilexec plexiltest
+%__install -p -D -t %{buildroot}/%{_datarootdir}/%{name}/scripts list_ports_in_use plexil-check-prog checkPlexil port_in_use find_open_port
 popd
 
 # viewer
@@ -191,10 +191,12 @@ popd
 %doc README
 %doc CAVEATS
 %doc Versions
+%{_bindir}/plexil
+%{_bindir}/plexilexec
+%{_bindir}/plexiltest
 %{_bindir}/plexil-analyzePlan
 %{_bindir}/plexil-benchmark
 %{_bindir}/plexil-universalExec
-%{_bindir}/plexiltest
 %{_bindir}/summarize-plexil
 %{_libdir}/*.so.*
 %{_sysconfdir}/profile.d/%{name}.sh
@@ -202,6 +204,8 @@ popd
 %dir %{_datarootdir}/%{name}/scripts
 %{_datarootdir}/%{name}/examples/empty.psx
 %{_datarootdir}/%{name}/scripts/list_ports_in_use
+%{_datarootdir}/%{name}/scripts/port_in_use
+%{_datarootdir}/%{name}/scripts/find_open_port
 %{_datarootdir}/%{name}/scripts/plexil-check-prog
 %{_datarootdir}/%{name}/scripts/checkPlexil
 
@@ -247,6 +251,9 @@ popd
 
 
 %changelog
+* Thu Aug 16 2018 Till Hofmann <thofmann@fedoraproject.org> - 4.5.0-0.10
+- Add all scripts to run the plexil viewer, add main plexil script
+
 * Wed Aug 15 2018 Till Hofmann <thofmann@fedoraproject.org> - 4.5.0-0.9
 - Keep all libraries in %%{_libdir}, add Plexil infix instead
 

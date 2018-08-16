@@ -249,6 +249,28 @@ index 5ceeb0e..338b0a2 100755
  
 -exec $JAVA -jar $PLEXIL_HOME/jars/saxon9he.jar -xsl:"$PLEXIL_HOME/schema/translate-plexil.xsl" -s:"$input_file" -o:"$output_file"
 +exec $JAVA -jar /usr/share/java/saxon/Saxon-HE.jar -xsl:"$PLEXIL_HOME/schema/translate-plexil.xsl" -s:"$input_file" -o:"$output_file"
+diff --git a/scripts/find_open_port b/scripts/find_open_port
+index f46772c..0de6a7c 100755
+--- a/scripts/find_open_port
++++ b/scripts/find_open_port
+@@ -28,7 +28,7 @@
+ if [ -z "$PLEXIL_HOME" ]
+ then
+     echo Error: Please set environment variable PLEXIL_HOME
+-    echo to the full pathname of your root 'plexil' directory.
++    echo by loading /etc/profile.d/plexil.sh.
+     exit 2
+ fi
+ 
+@@ -47,7 +47,7 @@ MAX_PORT=49150
+ active_ports="/tmp/find_open_port.$PPID"
+ port_found=0
+ 
+-ports_in_use=`list_ports_in_use`
++ports_in_use=`$PLEXIL_HOME/scripts/list_ports_in_use`
+ 
+ for ((n=$MIN_PORT ; n<=$MAX_PORT ; ++n))
+ do
 diff --git a/scripts/plexil b/scripts/plexil
 index 941857c..6efcd45 100755
 --- a/scripts/plexil
@@ -334,6 +356,60 @@ index 1c73bb3..e9c9e32 100755
      fi
  
  	# If plexilisp generates a plan, we can check it.
+diff --git a/scripts/plexilexec b/scripts/plexilexec
+index 6984fcc..cc754a4 100755
+--- a/scripts/plexilexec
++++ b/scripts/plexilexec
+@@ -43,13 +43,11 @@
+ if [ -z "$PLEXIL_HOME" ]
+ then
+     echo Error: Please set environment variable PLEXIL_HOME
+-    echo to the full pathname of your 'plexil' or 'trunk' directory.
++    echo by loading /etc/profile.d/plexil.sh.
+     echo Exiting.
+     exit 1
+ fi
+ 
+-. $PLEXIL_HOME/scripts/plexil-setup.sh
+-
+ validate_file()
+ {
+     if [ -z $1 ]
+@@ -174,6 +172,9 @@ help_text=" Options:\n\
+ if [ $PLEXIL_EXECUTABLE ]
+ then
+     prog=$PLEXIL_EXECUTABLE
++elif [ -f /usr/bin/plexil-universalExec ] && [ -x /usr/bin/plexil-universalExec ]
++then
++    prog=/usr/bin/plexil-universalExec
+ elif [ -f $PLEXIL_HOME/bin/universalExec ] && [ -x $PLEXIL_HOME/bin/universalExec ]
+ then
+     prog=$PLEXIL_HOME/bin/universalExec
+@@ -359,7 +360,7 @@ then
+         # Check local port, if supplied
+         if [ -n "$port_in" ]
+         then
+-            if ( echo `list_ports_in_use` | grep -q -v "\<${port_in}\>" )
++            if ( echo `$PLEXIL_HOME/scripts/list_ports_in_use` | grep -q -v "\<${port_in}\>" )
+             then
+                 echo "Error: No Viewer is listening on local port $port_in. Exiting."
+                 exit 1
+@@ -380,13 +381,13 @@ else
+     if [ -z "$port_in" ]
+     then
+         # Find open local port
+-        port_in=`find_open_port`
++        port_in=`$PLEXIL_HOME/scripts/find_open_port`
+         if [ -z "$port_in" ]
+         then
+             echo "Unable to find an open local port for Viewer communications."
+             exit 1
+         fi
+-    elif ( echo `list_ports_in_use` | grep -q "\<${port_in}\>" )
++    elif ( echo `$PLEXIL_HOME/scripts/list_ports_in_use` | grep -q "\<${port_in}\>" )
+     then
+         echo "Error: Port $port_in is in use. Exiting."
+         exit 1
 diff --git a/scripts/plexilisp b/scripts/plexilisp
 index f211fe1..e311b00 100755
 --- a/scripts/plexilisp
@@ -345,7 +421,7 @@ index f211fe1..e311b00 100755
 -emacs --batch --no-site-file --load $PLEXIL_HOME/compilers/plexilisp/plexil.el $1 --eval '(plexil)'
 +emacs --batch --no-site-file --load $PLEXIL_HOME/plexilisp/plexil.el $1 --eval '(plexil)'
 diff --git a/scripts/plexiltest b/scripts/plexiltest
-index a5f7532..65e5d60 100755
+index a5f7532..927a0ba 100755
 --- a/scripts/plexiltest
 +++ b/scripts/plexiltest
 @@ -28,13 +28,11 @@
@@ -384,7 +460,15 @@ index a5f7532..65e5d60 100755
              then
                  echo "Error: No Viewer is listening on local port $port_in. Exiting."
                  exit 1
-@@ -360,7 +358,7 @@ else
+@@ -353,14 +351,14 @@ else
+     if [ -z "$port_in" ]
+     then
+         # Find open local port
+-        port_in=`find_open_port`
++        port_in=`$PLEXIL_HOME/scripts/find_open_port`
+         if [ -z "$port_in" ]
+         then
+             echo "Unable to find an open local port for Viewer communications. Exiting."
              exit 1
          fi
          port_cmd="-n $port_in"
@@ -393,6 +477,28 @@ index a5f7532..65e5d60 100755
      then
          echo "Error: Port $port_in is in use. Exiting."
          exit 1
+diff --git a/scripts/port_in_use b/scripts/port_in_use
+index 743d386..0af5c09 100755
+--- a/scripts/port_in_use
++++ b/scripts/port_in_use
+@@ -35,7 +35,7 @@ usage()
+ if [ -z "$PLEXIL_HOME" ]
+ then
+     echo Error: Please set environment variable PLEXIL_HOME
+-    echo to the full pathname of your root 'plexil' directory.
++    echo by loading /etc/profile.d/plexil.sh.
+     exit 2
+ fi
+ 
+@@ -71,7 +71,7 @@ then
+     exit 2
+ fi
+ 
+-if ( list_ports_in_use | grep -q "\<$1\>" )
++if ( $PLEXIL_HOME/scripts/list_ports_in_use | grep -q "\<$1\>" )
+ then
+     if [ -z "$quiet" ]
+     then
 diff --git a/scripts/summarize-plexil b/scripts/summarize-plexil
 index b83f30a..f9e4217 100755
 --- a/scripts/summarize-plexil
@@ -428,3 +534,25 @@ index b83f30a..f9e4217 100755
  
  echo "Summarizing $input_file ..."
  $JAVA -jar $saxon_jar -o:$result_file $input_file $transform_file 
+diff --git a/viewers/pv/src/gov/nasa/luv/LuvSocketServer.java b/viewers/pv/src/gov/nasa/luv/LuvSocketServer.java
+index 753e29e..1ed054d 100644
+--- a/viewers/pv/src/gov/nasa/luv/LuvSocketServer.java
++++ b/viewers/pv/src/gov/nasa/luv/LuvSocketServer.java
+@@ -328,7 +328,7 @@ public class LuvSocketServer {
+ 
+     public static Set<Integer> getPortsInUse() {
+         Set<Integer> result = new TreeSet<Integer>();
+-        String[] cmd = {"list_ports_in_use"};
++        String[] cmd = {Constants.PLEXIL_SCRIPTS_DIR + "/list_ports_in_use"};
+         try {
+             Process p = Runtime.getRuntime().exec(cmd);
+             BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
+@@ -362,7 +362,7 @@ public class LuvSocketServer {
+ 
+     /** Return true if port free, false otherwise */
+     public static boolean portFree(int port) {
+-        String[] cmd = {"port_in_use", "-q", ""};
++        String[] cmd = {Constants.PLEXIL_SCRIPTS_DIR + "/port_in_use", "-q", ""};
+         cmd[2] = Integer.toString(port);
+         try {
+             return (1 == Runtime.getRuntime().exec(cmd).waitFor());
