@@ -1,6 +1,6 @@
 Name:           plexil
 Version:        4.5.0
-Release:        0.10%{?dist}
+Release:        0.11%{?dist}
 Summary:        A programming language for representing plans for automation
 
 License:        BSD
@@ -101,6 +101,7 @@ The %{name}-test package contains binaries to test the functionality of %{name}.
 %package        examples
 Summary:        Example programs for %{name}
 BuildArch:      noarch
+Requires:       %{name}-devel%{?_isa} = %{version}-%{release}
 
 %description    examples
 The %{name}-examples package contains examples for programs using %{name}.
@@ -164,6 +165,9 @@ pushd scripts
 %__install -p -D -t %{buildroot}/%{_datarootdir}/%{name}/scripts list_ports_in_use plexil-check-prog checkPlexil port_in_use find_open_port
 popd
 
+# devel
+%__install -p -D -t %{buildroot}/%{_datarootdir}/%{name}/makeinclude makeinclude/*
+
 # viewer
 pushd viewers/pv
 %__install -p -D luv.jar %{buildroot}/%{_javadir}/%{name}-viewer.jar
@@ -212,6 +216,7 @@ popd
 %files devel
 %{_includedir}/plexil
 %{_libdir}/*.so
+%{_datarootdir}/%{name}/makeinclude
 
 %files viewer
 %{_javadir}/%{name}-viewer.jar
@@ -251,6 +256,9 @@ popd
 
 
 %changelog
+* Thu Aug 16 2018 Till Hofmann <thofmann@fedoraproject.org> - 4.5.0-0.11
+- Add makeinclude files to the package
+
 * Thu Aug 16 2018 Till Hofmann <thofmann@fedoraproject.org> - 4.5.0-0.10
 - Add all scripts to run the plexil viewer, add main plexil script
 
