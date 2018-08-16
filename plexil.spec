@@ -1,6 +1,6 @@
 Name:           plexil
 Version:        4.5.0
-Release:        0.11%{?dist}
+Release:        0.12%{?dist}
 Summary:        A programming language for representing plans for automation
 
 License:        BSD
@@ -61,6 +61,8 @@ Requires:       %{name}%{?_isa} = %{version}-%{release}
 BuildArch:      noarch
 Requires:       java
 Requires:       javapackages-filesystem
+Requires:       nanoxml
+Requires:       saxon
 
 %description    viewer
 The %{name}-viewer package contains a viewer for %{name}.
@@ -72,7 +74,9 @@ Requires:       %{name}%{?_isa} = %{version}-%{release}
 BuildArch:      noarch
 Requires:       java-headless
 Requires:       javapackages-filesystem
+Requires:       antlr3-java
 Requires:       nanoxml
+Requires:       saxon
 Requires:       /usr/bin/xmllint
 Recommends:     %{name}-lisp
 
@@ -258,6 +262,9 @@ popd
 
 
 %changelog
+* Thu Aug 16 2018 Till Hofmann <thofmann@fedoraproject.org> - 4.5.0-0.12
+- Add missing Requires: in java packages
+
 * Thu Aug 16 2018 Till Hofmann <thofmann@fedoraproject.org> - 4.5.0-0.11
 - Add makeinclude files to the package
 - Fix loading of adapters with Plexil prefix in library name
