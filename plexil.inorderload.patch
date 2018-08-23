@@ -1,0 +1,199 @@
+diff -urN plexil-4.5.0/src/app-framework/AdapterConfiguration.cc plexil-4.5.0.inorderload/src/app-framework/AdapterConfiguration.cc
+--- plexil-4.5.0/src/app-framework/AdapterConfiguration.cc	2018-08-03 03:39:47.000000000 +0200
++++ plexil-4.5.0.inorderload/src/app-framework/AdapterConfiguration.cc	2018-08-23 19:11:13.712783625 +0200
+@@ -64,6 +64,7 @@
+ #endif
+ 
+ #include <cstring>
++#include <algorithm>
+ 
+ namespace PLEXIL {
+ 
+@@ -102,7 +103,7 @@
+ 
+     // unregister and delete adapters
+     // *** kludge for buggy std::set template ***
+-    std::set<InterfaceAdapter *>::iterator it = m_adapters.begin();
++    std::list<InterfaceAdapter *>::iterator it = m_adapters.begin();
+     while (it != m_adapters.end()) {
+       InterfaceAdapter *ia = *it;
+       m_adapters.erase(it); // these two lines should be:
+@@ -153,7 +154,9 @@
+                << "\"");
+           return false;
+         }
+-        m_adapters.insert(adapter);
++        if (std::find(m_adapters.begin(), m_adapters.end(), adapter) == m_adapters.end()) {
++          m_adapters.push_back(adapter);
++        }
+       }
+       else if (strcmp(elementType, InterfaceSchema::LISTENER_TAG()) == 0) {
+         // Construct an ExecListener instance and attach it to the Exec
+@@ -216,7 +219,7 @@
+   {
+     debugMsg("AdapterConfiguration:initialize", " initializing interface adapters");
+     bool success = true;
+-    for (std::set<InterfaceAdapter *>::iterator it = m_adapters.begin();
++    for (std::list<InterfaceAdapter *>::iterator it = m_adapters.begin();
+          success && it != m_adapters.end();
+          ++it) {
+       InterfaceAdapter *a = *it;
+@@ -247,7 +250,7 @@
+   {
+     debugMsg("AdapterConfiguration:start", " starting interface adapters");
+     bool success = true;
+-    for (std::set<InterfaceAdapter *>::iterator it = m_adapters.begin();
++    for (std::list<InterfaceAdapter *>::iterator it = m_adapters.begin();
+          success && it != m_adapters.end();
+          ++it) {
+       success = (*it)->start();
+@@ -276,7 +279,7 @@
+ 
+     // halt adapters
+     bool success = true;
+-    for (std::set<InterfaceAdapter *>::iterator it = m_adapters.begin();
++    for (std::list<InterfaceAdapter *>::iterator it = m_adapters.begin();
+          it != m_adapters.end();
+          ++it)
+       success = (*it)->stop() && success;
+@@ -297,7 +300,7 @@
+ 
+     clearAdapterRegistry();
+     bool success = true;
+-    for (std::set<InterfaceAdapter *>::iterator it = m_adapters.begin();
++    for (std::list<InterfaceAdapter *>::iterator it = m_adapters.begin();
+          it != m_adapters.end();
+          ++it)
+       success = (*it)->reset() && success;
+@@ -317,7 +320,7 @@
+     clearAdapterRegistry();
+ 
+     bool success = true;
+-    for (std::set<InterfaceAdapter *>::iterator it = m_adapters.begin();
++    for (std::list<InterfaceAdapter *>::iterator it = m_adapters.begin();
+          it != m_adapters.end();
+          ++it)
+       success = (*it)->shutdown() && success;
+@@ -336,8 +339,8 @@
+    */
+   void AdapterConfiguration::addInterfaceAdapter(InterfaceAdapter *adapter)
+   {
+-    if (m_adapters.find(adapter) == m_adapters.end())
+-      m_adapters.insert(adapter);
++    if (std::find(m_adapters.begin(), m_adapters.end(), adapter) == m_adapters.end())
++      m_adapters.push_back(adapter);
+   }
+ 
+   /**
+@@ -501,7 +504,9 @@
+       debugMsg("AdapterConfiguration:registerCommandInterface",
+                " registering interface " << intf << " for command '" << commandName << "'");
+       m_commandMap.insert(std::pair<std::string, InterfaceAdapter *>(commandName, intf));
+-      m_adapters.insert(intf);
++      if (std::find(m_adapters.begin(), m_adapters.end(), intf) == m_adapters.end()) {
++        m_adapters.push_back(intf);
++      }
+       return true;
+     } else {
+       debugMsg("AdapterConfiguration:registerCommandInterface",
+@@ -528,7 +533,9 @@
+       debugMsg("AdapterConfiguration:registerLookupInterface",
+                " registering interface " << intf << " for lookup '" << stateName << "'");
+       m_lookupMap.insert(std::pair<std::string, InterfaceAdapter *>(stateName, intf));
+-      m_adapters.insert(intf);
++      if (std::find(m_adapters.begin(), m_adapters.end(), intf) == m_adapters.end()) {
++        m_adapters.push_back(intf);
++      }
+       if (telemetryOnly)
+         m_telemetryLookups.insert(stateName);
+       return true;
+@@ -555,7 +562,9 @@
+     debugMsg("AdapterConfiguration:registerPlannerUpdateInterface",
+              " registering planner update interface " << intf);
+     m_plannerUpdateInterface = intf;
+-    m_adapters.insert(intf);
++    if (std::find(m_adapters.begin(), m_adapters.end(), intf) == m_adapters.end()) {
++      m_adapters.push_back(intf);
++    }
+     return true;
+   }
+ 
+@@ -573,7 +582,9 @@
+       return false;
+     }
+     m_defaultInterface = intf;
+-    m_adapters.insert(intf);
++    if (std::find(m_adapters.begin(), m_adapters.end(), intf) == m_adapters.end()) {
++      m_adapters.push_back(intf);
++    }
+     debugMsg("AdapterConfiguration:setDefaultInterface",
+              " setting default interface " << intf);
+     return true;
+@@ -596,7 +607,9 @@
+       return false;
+     }
+     m_defaultLookupInterface = intf;
+-    m_adapters.insert(intf);
++    if (std::find(m_adapters.begin(), m_adapters.end(), intf) == m_adapters.end()) {
++      m_adapters.push_back(intf);
++    }
+     debugMsg("AdapterConfiguration:setDefaultLookupInterface",
+              " setting default lookup interface " << intf);
+     return true;
+@@ -618,7 +631,9 @@
+       return false;
+     }
+     m_defaultCommandInterface = intf;
+-    m_adapters.insert(intf);
++    if (std::find(m_adapters.begin(), m_adapters.end(), intf) == m_adapters.end()) {
++      m_adapters.push_back(intf);
++    }
+     debugMsg("AdapterConfiguration:setDefaultCommandInterface",
+              " setting default command interface " << intf);
+     return true;
+@@ -768,8 +783,8 @@
+    * @return true if the given adapter existed and was deleted. False if not found
+    */
+   bool AdapterConfiguration::deleteAdapter(InterfaceAdapter *intf) {
+-    int res = m_adapters.erase(intf);
+-    return res != 0;
++    m_adapters.remove(intf);
++    return true;
+   }
+ 
+   // Initialize global variable
+diff -urN plexil-4.5.0/src/app-framework/AdapterConfiguration.hh plexil-4.5.0.inorderload/src/app-framework/AdapterConfiguration.hh
+--- plexil-4.5.0/src/app-framework/AdapterConfiguration.hh	2015-08-27 19:10:53.000000000 +0200
++++ plexil-4.5.0.inorderload/src/app-framework/AdapterConfiguration.hh	2018-08-23 18:29:19.582563270 +0200
+@@ -36,6 +36,7 @@
+ #include "InterfaceAdapter.hh"
+ 
+ #include <set>
++#include <list>
+ 
+ namespace PLEXIL {
+ 
+@@ -228,12 +229,12 @@
+      */
+     InterfaceAdapter *getDefaultInterface();
+ 
+-    std::set<InterfaceAdapter *> & getAdapters()
++    std::list<InterfaceAdapter *> & getAdapters()
+     {
+       return m_adapters;
+     }
+ 
+-    std::set<InterfaceAdapter *> const & getAdapters() const
++    std::list<InterfaceAdapter *> const & getAdapters() const
+     {
+       return m_adapters;
+     }
+@@ -332,7 +333,7 @@
+     ExecListenerHub *m_listenerHub;
+ 
+     //* Set of all known InterfaceAdapter instances
+-    std::set<InterfaceAdapter *> m_adapters;
++    std::list<InterfaceAdapter *> m_adapters;
+ 
+     //* List of directory names for plan file search paths
+     std::vector<std::string> m_planPath;

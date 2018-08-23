@@ -1,6 +1,6 @@
 Name:           plexil
 Version:        4.5.0
-Release:        0.12%{?dist}
+Release:        0.13%{?dist}
 Summary:        A programming language for representing plans for automation
 
 License:        BSD
@@ -14,6 +14,7 @@ Source0:        %{name}-%{version}.tar.gz
 Patch0:         %{name}.remove-pugixml.patch
 Patch1:         %{name}.script-paths.patch
 Patch2:         %{name}.libnames.patch
+Patch3:         %{name}.inorderload.patch
 
 BuildRequires:  automake
 BuildRequires:  gcc-c++
@@ -262,6 +263,9 @@ popd
 
 
 %changelog
+* Thu Aug 23 2018 Tim Niemueller <tim@niemueller.de> - 4.5.0-0.13
+- Add inorderload patch
+
 * Thu Aug 16 2018 Till Hofmann <thofmann@fedoraproject.org> - 4.5.0-0.12
 - Add missing Requires: in java packages
 
