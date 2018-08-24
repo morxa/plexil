@@ -1,6 +1,6 @@
 Name:           plexil
 Version:        4.5.0
-Release:        0.13%{?dist}
+Release:        0.14%{?dist}
 Summary:        A programming language for representing plans for automation
 
 License:        BSD
@@ -15,6 +15,7 @@ Patch0:         %{name}.remove-pugixml.patch
 Patch1:         %{name}.script-paths.patch
 Patch2:         %{name}.libnames.patch
 Patch3:         %{name}.inorderload.patch
+Patch4:         %{name}.library-call-node-invariant-condition.patch
 
 BuildRequires:  automake
 BuildRequires:  gcc-c++
@@ -263,6 +264,9 @@ popd
 
 
 %changelog
+* Fri Aug 24 2018 Till Hofmann <thofmann@fedoraproject.org> - 4.5.0-0.14
+- Add patch to add an invariant condition to LibraryCallNodes
+
 * Thu Aug 23 2018 Tim Niemueller <tim@niemueller.de> - 4.5.0-0.13
 - Add inorderload patch
 

@@ -1,0 +1,63 @@
+commit 1420aa60561d3e5931c8a04a6c1e4ecce083f463
+Author: Till Hofmann <hofmann@kbsg.rwth-aachen.de>
+Date:   Fri Aug 24 18:07:35 2018 +0200
+
+    Add InvariantCondition to LibraryCallNodes
+    
+    The LibraryCallNode needs an invariant condition similar to ListNodes;
+    if the library call failed, the node must fail, too.
+    
+    Co-authored-by: Tim Niemueller <niemueller@kbsg.rwth-aachen.de>
+
+diff --git a/schema/translate-plexil.xsl b/schema/translate-plexil.xsl
+index 0b20822..8a2d5a7 100644
+--- a/schema/translate-plexil.xsl
++++ b/schema/translate-plexil.xsl
+@@ -128,6 +128,47 @@
+     </Node>
+   </xsl:template>
+ 
++  <xsl:template match="Node[@NodeType='LibraryNodeCall']">
++    <xsl:param name="mode" />
++    <Node NodeType="LibraryNodeCall">
++      <xsl:call-template name="translate-conditions">
++        <xsl:with-param name="mode" select="$mode" />
++      </xsl:call-template>
++        <xsl:copy-of select="node()" />
++      <xsl:call-template name="library-success-invariant-condition" />
++    </Node>
++  </xsl:template>
++
++  <xsl:template name="library-success-invariant-condition">
++    <InvariantCondition>
++      <NOT>
++        <xsl:choose>
++          <xsl:when test="InvariantCondition/*">
++            <AND>
++              <xsl:apply-templates select="InvariantCondition/*" />
++              <xsl:call-template name="child-failed-test">
++                <xsl:with-param name="id">
++                  <xsl:call-template name="node-id">
++                    <xsl:with-param name="context" select="NodeBody/LibraryNodeCall" />
++                  </xsl:call-template>
++                </xsl:with-param>
++              </xsl:call-template>
++            </AND>
++          </xsl:when>
++          <xsl:otherwise>
++            <xsl:call-template name="child-failed-test">
++              <xsl:with-param name="id">
++                <xsl:call-template name="node-id">
++                  <xsl:with-param name="context" select="NodeBody/LibraryNodeCall" />
++                </xsl:call-template>
++              </xsl:with-param>
++            </xsl:call-template>
++          </xsl:otherwise>
++        </xsl:choose>
++      </NOT>
++    </InvariantCondition>
++  </xsl:template>
++
+   <xsl:template name="success-invariant-condition">
+     <InvariantCondition>
+       <xsl:choose>
