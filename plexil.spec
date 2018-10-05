@@ -1,6 +1,6 @@
 Name:           plexil
 Version:        4.5.0
-Release:        0.14%{?dist}
+Release:        0.15%{?dist}
 Summary:        A programming language for representing plans for automation
 
 License:        BSD
@@ -51,6 +51,7 @@ simulations involving intelligent software agents.
 %package        devel
 Summary:        Development files for %{name}
 Requires:       %{name}%{?_isa} = %{version}-%{release}
+Requires:       pugixml-devel
 
 %description    devel
 The %{name}-devel package contains libraries and header files for
@@ -61,7 +62,7 @@ developing applications that use %{name}.
 Summary:        A viewer for %{name}
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 BuildArch:      noarch
-Requires:       java
+Requires:       java-1.8.0-openjdk
 Requires:       javapackages-filesystem
 Requires:       nanoxml
 Requires:       saxon
@@ -264,6 +265,10 @@ popd
 
 
 %changelog
+* Fri Oct 05 2018 Till Hofmann <thofmann@fedoraproject.org> - 4.5.0-0.15
+- Add missing 'Requires: pugixml-devel' to devel sub-package
+- Replace 'Requires: java' by 'Requires: openjdk-1.8.0-jdk' in java sub-package
+
 * Fri Aug 24 2018 Till Hofmann <thofmann@fedoraproject.org> - 4.5.0-0.14
 - Add patch to add an invariant condition to LibraryCallNodes
 
