@@ -1,6 +1,6 @@
 Name:           plexil
 Version:        4.5.0
-Release:        0.15%{?dist}
+Release:        0.16%{?dist}
 Summary:        A programming language for representing plans for automation
 
 License:        BSD
@@ -10,7 +10,8 @@ URL:            http://plexil.sourceforge.net/
 # Created with:
 # svn export https://svn.code.sf.net/p/plexil/code/branches/plexil-4 plexil-%%{version}
 # tar czf plexil-%%{version}.tar.gz plexil-%%{version}
-Source0:        %{name}-%{version}.tar.gz
+# The following source is created locally and uploaded to fedorapeople, not an official source
+Source0:        https://thofmann.fedorapeople.org/plexil/plexil-%{version}.tar.gz
 Patch0:         %{name}.remove-pugixml.patch
 Patch1:         %{name}.script-paths.patch
 Patch2:         %{name}.libnames.patch
@@ -265,6 +266,9 @@ popd
 
 
 %changelog
+* Tue Nov 06 2018 Till Hofmann <thofmann@fedoraproject.org> - 4.5.0-0.16
+- Use tarball hosted at fedorapeople.org as source
+
 * Fri Oct 05 2018 Till Hofmann <thofmann@fedoraproject.org> - 4.5.0-0.15
 - Add missing 'Requires: pugixml-devel' to devel sub-package
 - Replace 'Requires: java' by 'Requires: openjdk-1.8.0-jdk' in java sub-package
